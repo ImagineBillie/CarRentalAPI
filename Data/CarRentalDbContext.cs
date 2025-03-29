@@ -1,5 +1,6 @@
-using CarRentalAPI.Models;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using CarRentalAPI.Models;
 
 namespace CarRentalAPI.Data
 {

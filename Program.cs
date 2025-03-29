@@ -7,11 +7,17 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 
 // Register the DbContext with MySQL using Pomelo
+//builder.Services.AddDbContext<CarRentalDbContext>(options =>
+//    options.UseMySql(
+//        builder.Configuration.GetConnectionString("CarRentalDb"),
+//        ServerVersion.AutoDetect(builder.Configuration.GetConnectionString("CarRentalDb"))
+//    ));
+
 builder.Services.AddDbContext<CarRentalDbContext>(options =>
-    options.UseMySql(
-        builder.Configuration.GetConnectionString("CarRentalDb"),
-        ServerVersion.AutoDetect(builder.Configuration.GetConnectionString("CarRentalDb"))
+    options.UseMySQL(
+        builder.Configuration.GetConnectionString("CarRentalDb")
     ));
+
 
 // Configure Swagger/OpenAPI
 builder.Services.AddEndpointsApiExplorer();
