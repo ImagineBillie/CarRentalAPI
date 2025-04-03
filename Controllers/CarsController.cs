@@ -2,6 +2,7 @@
 using CarRentalAPI.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Hosting; // Add this namespace
 
 namespace CarRentalAPI.Controllers
 {
@@ -10,11 +11,16 @@ namespace CarRentalAPI.Controllers
     public class CarsController : ControllerBase
     {
         private readonly CarRentalDbContext _context;
+        private readonly IWebHostEnvironment _environment; // Add this field
 
-        public CarsController(CarRentalDbContext context)
+        public CarsController(
+            CarRentalDbContext context,
+            IWebHostEnvironment environment) // Inject IWebHostEnvironment
         {
             _context = context;
+            _environment = environment;
         }
+
 
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Car>>> GetCars()
@@ -64,6 +70,32 @@ namespace CarRentalAPI.Controllers
             _context.Cars.Remove(car);
             await _context.SaveChangesAsync();
             return NoContent();
+        }
+
+        [HttpPost("upload")]
+        public async Task<IActionResult> Upload(IFormFile file)
+        {
+            try
+            {
+                var uploadsFolder = Path.Combine(_environment.WebRootPath, "Media", "cars");
+
+                // Ensure directory exists
+                Directory.CreateDirectory(uploadsFolder);
+
+                var uniqueFileName = Guid.NewGuid().ToString() + "_" + file.FileName;
+                var filePath = Path.Combine(uploadsFolder, uniqueFileName);
+
+                using (var fileStream = new FileStream(filePath, FileMode.Create))
+                {
+                    await file.CopyToAsync(fileStream);
+                }
+
+                return Ok(uniqueFileName);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
         }
     }
 }

@@ -16,8 +16,7 @@ namespace CarRentalAPI.Controllers
             _context = context;
         }
 
-        [Authorize]
-        [HttpGet("bookings")]
+        [HttpGet]
         public async Task<ActionResult<IEnumerable<Booking>>> GetBookings()
         {
             return await _context.Bookings.ToListAsync();
@@ -36,7 +35,6 @@ namespace CarRentalAPI.Controllers
         [HttpPost]
         public async Task<ActionResult<Booking>> PostBooking(Booking booking)
         {
-            // Set server-generated fields
             booking.BookingDate = DateTime.UtcNow;
             booking.CreatedAt = DateTime.UtcNow;
             booking.UpdatedAt = DateTime.UtcNow;
